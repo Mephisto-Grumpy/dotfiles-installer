@@ -50,8 +50,8 @@ jobs:
       - name: Release to Homebrew tap
         uses: Justintime50/homebrew-releaser@v1
         with:
-          homebrew_owner: PunGrumpy
-          homebrew_tap: homebrew-formulas
+          homebrew_owner: Mephisto-Grumpy
+          homebrew_tap: dotfiles-installer
           github_token: ${{ secrets.GITHUB_TOKEN }}
           install: 'bin.install "dotfiles-installer"'
           update_readme_table: true
