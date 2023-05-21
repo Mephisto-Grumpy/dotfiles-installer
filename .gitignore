@@ -3,3 +3,7 @@ coverage.out
 
 # Environment
 .env
+
+# Build
+main
+dotfiles-installer
