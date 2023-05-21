@@ -40,7 +40,9 @@ func TestInstall(t *testing.T) {
 
 	t.Run("should return nil when RunCmd succeeds", func(t *testing.T) {
 		dir := "/tmp/dotfiles"
-		os.MkdirAll(dir, os.ModePerm)
+		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+			t.Fatal(err)
+		}
 		defer os.RemoveAll(dir)
 
 		e := mockExecutor{}

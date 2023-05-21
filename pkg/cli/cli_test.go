@@ -46,6 +46,8 @@ func captureOutput(f func()) string {
 	os.Stdout = old
 
 	var buf strings.Builder
-	io.Copy(&buf, r)
+	if _, err := io.Copy(&buf, r); err != nil {
+		panic(err)
+	}
 	return buf.String()
 }
