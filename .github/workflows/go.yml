@@ -60,8 +60,6 @@ jobs:
           homebrew_owner: Mephisto-Grumpy
           homebrew_tap: homebrew-formulas
           github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          depends_on: |
-            "go" => :build
           install: 'bin.install "dotfiles-installer"'
           update_readme_table: true
           commit_owner: Mephisto-Grumpy
