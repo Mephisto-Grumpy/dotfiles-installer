@@ -1,0 +1,51 @@
+package cli
+
+import (
+	"io"
+	"os"
+	"strings"
+	"testing"
+)
+
+func TestParseFlags(t *testing.T) {
+	// backup command-line arguments
+	oldArgs := os.Args
+	defer func() { os.Args = oldArgs }()
+
+	os.Args = []string{"cmd", "-url", "testurl", "-s"}
+
+	cli := &CLI{}
+	cli.ParseFlags()
+
+	if cli.URL != "testurl" {
+		t.Errorf("Expected URL 'testurl', got '%s'", cli.URL)
+	}
+	if cli.Silent != true {
+		t.Errorf("Expected Silent to be true, got '%v'", cli.Silent)
+	}
+}
+
+func TestShowHelp(t *testing.T) {
+	cli := &CLI{}
+	helpMsg := captureOutput(cli.ShowHelp)
+
+	if !strings.Contains(helpMsg, "Usage") || !strings.Contains(helpMsg, "Options") || !strings.Contains(helpMsg, "Description") {
+		t.Errorf("Help message did not contain expected sections")
+	}
+}
+
+// captureOutput captures all output sent to standard output from the provided function.
+func captureOutput(f func()) string {
+	old := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+
+	f()
+
+	w.Close()
+	os.Stdout = old
+
+	var buf strings.Builder
+	io.Copy(&buf, r)
+	return buf.String()
+}
