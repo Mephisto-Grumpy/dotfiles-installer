@@ -44,64 +44,9 @@ jobs:
           name: dotfiles-installer
           path: ./dotfiles-installer
 
-  github-releaser:
-    runs-on: ubuntu-latest
-    needs: build
-    name: GitHub Releaser
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.20
-
-      - name: Download build artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: dotfiles-installer
-
-      - name: Setup Git
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-
-      - name: Create Tag
-        id: create_tag
-        run: |
-          TAG_NAME="release-${GITHUB_RUN_NUMBER}"
-          git tag -a "$TAG_NAME" -m "Release ${{ github.run_number }}"
-          git push origin "$TAG_NAME"
-          echo "::set-output name=tag_name::$TAG_NAME"
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name: ${{ steps.create_tag.outputs.tag_name }}
-          release_name: Release ${{ steps.create_tag.outputs.tag_name }}
-          draft: false
-          prerelease: false
-
-      - name: Upload Release Asset
-        uses: xresloader/upload-to-github-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          file: ./dotfiles-installer
-          tags: true
-          draft: false
-          tag_name: ${{ steps.create_tag.outputs.tag_name }}
-          release_id: ${{ steps.create_release.outputs.id }}
-          overwrite: true
-          verbose: true
-
   homebrew-releaser:
     runs-on: ubuntu-latest
-    needs: github-releaser
+    needs: build
     name: Homebrew Releaser
     steps:
       - name: Download build artifact
