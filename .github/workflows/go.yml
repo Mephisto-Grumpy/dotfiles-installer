@@ -39,7 +39,7 @@ jobs:
         uses: codecov/codecov-action@v3
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: buind
           path: bin/*
