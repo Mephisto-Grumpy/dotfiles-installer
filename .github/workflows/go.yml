@@ -41,26 +41,87 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
-          name: dotfiles-installer
-          path: ./dotfiles-installer
+          name: buind
+          path: bin/*
 
-  homebrew-releaser:
-    runs-on: ubuntu-latest
+  publish:
     needs: build
-    name: Homebrew Releaser
+    name: Publish
+    runs-on: ubuntu-latest
     steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: dotfiles-installer
+      - uses: actions/checkout@v3
 
-      - name: Release to Homebrew tap
-        uses: Justintime50/homebrew-releaser@v1
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
         with:
-          homebrew_owner: Mephisto-Grumpy
-          homebrew_tap: homebrew-formulas
-          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          install: bin.install "dotfiles-installer" => "dotfiles-installer"
-          update_readme_table: true
-          commit_owner: Mephisto-Grumpy
-          commit_email: 99166827+Mephisto-Grumpy@users.noreply.github.com
+          name: build
+          path: bin/
+
+      - name: Check File Changes
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            constgo:
+              - 'pkg/cli/constants.go'
+
+      - name: Check If Version Updated
+        if: steps.changes.outputs.constgo == 'true'
+        run: |
+          VER_FILE=.version
+          OLD_VER=$(cat $VER_FILE)
+          NEW_VER=$(awk -F\" '/Ver/ {print $2}' pkg/cli/constants.go)
+
+          if [[ $OLD_VER != $NEW_VER ]]; then
+            echo "Version updated from $OLD_VER to $NEW_VER"
+            echo $NEW_VER > $VER_FILE
+            git config user.name "Automated"
+            git config user.email "actions@users.noreply.github.com"
+            git add $VER_FILE
+            git commit -m "🤜🏻 Bump version to $NEW_VER"
+            git push
+          else
+            echo "Version has not been updated"
+            exit 1
+          fi
+
+      - name: Create Tag
+        if: steps.changes.outputs.constgo == 'true'
+        run: |
+          VER_FILE=.version
+          VER=$(cat $VER_FILE)
+          git config user.name "Automated[bot]"
+          git config user.email "44036562+actions@users.noreply.github.com"
+          git tag $VER
+          git push origin $VER
+
+      - name: Get New Version
+        id: check-version
+        run: |
+          VER_FILE=.version
+          VER=$(cat $VER_FILE)
+          echo "VERSION=$VER" >> $GITHUB_ENV
+
+      - name: Create Release (Version changed)
+        uses: svenstaro/upload-release-action@v2
+        if: ${{ env.VERSION }} != '' && steps.changes.outputs.constgo == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: bin/*
+          tag: ${{ env.VERSION }}
+          overwrite: true
+          file_glob: true
+
+      - name: Update Release (Version not changed)
+        uses: svenstaro/upload-release-action@v2
+        if: ${{ env.VERSION }} == '' && steps.changes.outputs.constgo == 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: bin/*
+          tag: ${{ env.VERSION }}
+          overwrite: true
+          file_glob: true

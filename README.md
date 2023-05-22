@@ -39,9 +39,12 @@ This will generate a `dotfiles-installer` binary in your current directory.
 go test -race -coverprofile=coverage.out -covermode=atomic -tags test ./...
 ```
 
-## 📦 Deployment
+### 🐳 Docker for testing
 
-This project uses [Justintime50/homebrew-releaser](https://github.com/marketplace/actions/homebrew-releaser) for automated Homebrew formula generation and deployment.
+```bash
+docker build -t dotfiles-installer .
+docker run --rm -it -v $(pwd)/bin/*:/home/ubuntu/bin dotfiles-installer
+```
 
 ## ✍🏻 Authors
 

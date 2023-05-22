@@ -30,7 +30,11 @@ func main() {
 		pterm.Info.Printf("Cloning dotfiles from: %s\n", c.URL)
 	}
 
-	err = dotfiles.Install(e, fs, c.URL, c.Silent)
+	if c.Sudo {
+		pterm.Info.Println("Running as sudo")
+	}
+
+	err = dotfiles.Install(e, fs, c.URL, c.Silent, c.Sudo)
 	if err != nil {
 		c.ShowError(err)
 		return

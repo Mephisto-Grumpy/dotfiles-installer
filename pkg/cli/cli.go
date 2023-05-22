@@ -15,11 +15,13 @@ type CLI struct {
 	URL    string
 	Silent bool
 	Help   bool
+	Sudo   bool
 }
 
 func (c *CLI) ParseFlags() {
 	flag.StringVar(&c.URL, "url", "", "URL of the dotfile repo (optional, will be prompted if not provided)")
 	flag.BoolVar(&c.Silent, "s", false, "Run in silent mode (optional)")
+	flag.BoolVar(&c.Sudo, "force", false, "Run as sudo (optional)")
 	flag.BoolVar(&c.Help, "h", false, "Show help message")
 	flag.Parse()
 }
@@ -34,6 +36,7 @@ func (c *CLI) ShowHelp() {
 	fmt.Fprintln(w, pterm.Magenta("Options:"))
 	fmt.Fprintf(w, "  %s\t\tURL of the dotfile repo (optional, will be prompted if not provided)\n", pterm.Green("-url <url>"))
 	fmt.Fprintf(w, "  %s\t\tRun in silent mode (optional)\n", pterm.Green("-s"))
+	fmt.Fprintf(w, "  %s\t\tRun as sudo (optional)\n", pterm.Green("-force"))
 	fmt.Fprintf(w, "  %s\t\tShow help message\n", pterm.Green("-h"))
 	fmt.Fprintf(w, "\n%s:\tThis program clones a GitHub repo and creates symbolic links for all files and directories it contains.\n", pterm.Yellow("Description"))
 
@@ -73,6 +76,19 @@ func (c *CLI) PromptURL() error {
 
 	c.Silent = strings.ToLower(silent) == "y"
 
+	promptSudo := promptui.Prompt{
+		Label:     "Do you want to run with sudo? (Y/n)",
+		Validate:  validateSudo,
+		Templates: customTemplates(),
+	}
+
+	sudo, err := promptSudo.Run()
+	if err != nil {
+		return err
+	}
+
+	c.Sudo = strings.ToLower(sudo) == "y"
+
 	return nil
 }
 
@@ -84,6 +100,14 @@ func validateURL(input string) error {
 }
 
 func validateSilent(input string) error {
+	lowerInput := strings.ToLower(input)
+	if lowerInput != "y" && lowerInput != "n" {
+		return errors.New("input must be 'Y' or 'N'")
+	}
+	return nil
+}
+
+func validateSudo(input string) error {
 	lowerInput := strings.ToLower(input)
 	if lowerInput != "y" && lowerInput != "n" {
 		return errors.New("input must be 'Y' or 'N'")
