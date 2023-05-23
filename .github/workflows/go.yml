@@ -41,7 +41,7 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
-          name: buind
+          name: build
           path: ${{ github.workspace }}/bin/*
 
   publish:
