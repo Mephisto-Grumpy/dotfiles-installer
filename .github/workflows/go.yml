@@ -42,7 +42,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: buind
-          path: bin/*
+          path: ${{ github.workspace }}/bin/*
 
   publish:
     needs: build
@@ -55,7 +55,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build
-          path: bin/
+          path: ${{ github.workspace }}/bin/*
 
       - name: Check File Changes
         uses: dorny/paths-filter@v2
