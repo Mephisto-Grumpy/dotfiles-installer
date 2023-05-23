@@ -104,24 +104,24 @@ jobs:
 
       - name: Create Release (Version changed)
         uses: svenstaro/upload-release-action@v2
-        if: ${{ env.VERSION }} != '' && steps.changes.outputs.constgo == 'true'
+        if: steps.changes.outputs.constgo == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: bin/*
+          file: build/*
           tag: ${{ env.VERSION }}
           overwrite: true
           file_glob: true
 
       - name: Update Release (Version not changed)
         uses: svenstaro/upload-release-action@v2
-        if: ${{ env.VERSION }} == '' && steps.changes.outputs.constgo == 'false'
+        if: steps.changes.outputs.constgo != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: bin/*
+          file: build/*
           tag: ${{ env.VERSION }}
           overwrite: true
           file_glob: true
