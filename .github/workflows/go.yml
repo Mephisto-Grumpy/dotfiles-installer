@@ -112,7 +112,6 @@ jobs:
           file: build/*
           tag: ${{ env.VERSION }}
           overwrite: true
-          file_glob: true
 
       - name: Update Release (Version not changed)
         uses: svenstaro/upload-release-action@v2
@@ -124,4 +123,3 @@ jobs:
           file: build/*
           tag: ${{ env.VERSION }}
           overwrite: true
-          file_glob: true
