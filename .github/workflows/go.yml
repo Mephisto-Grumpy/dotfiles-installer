@@ -55,7 +55,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build
-          path: ${{ github.workspace }}/bin/*
+          path: build
 
       - name: Check File Changes
         uses: dorny/paths-filter@v2
@@ -109,7 +109,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: bin/*
+          file: build/*
           tag: ${{ env.VERSION }}
           overwrite: true
 
@@ -120,6 +120,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: bin/*
+          file: build/*
           tag: ${{ env.VERSION }}
           overwrite: true
