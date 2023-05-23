@@ -5,23 +5,24 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/Mephisto-Grumpy/dotfiles-installer/pkg/flag"
 )
 
 func TestParseFlags(t *testing.T) {
-	// backup command-line arguments
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
 
-	os.Args = []string{"cmd", "-url", "testurl", "-s"}
+	os.Args = []string{"cmd", "--url", "testurl", "-s"}
 
-	cli := &CLI{}
-	cli.ParseFlags()
+	flags := &flag.Flags{}
+	flags.ParseFlags()
 
-	if cli.URL != "testurl" {
-		t.Errorf("Expected URL 'testurl', got '%s'", cli.URL)
+	if flags.URL != "testurl" {
+		t.Errorf("Expected URL 'testurl', got '%s'", flags.URL)
 	}
-	if cli.Silent != true {
-		t.Errorf("Expected Silent to be true, got '%v'", cli.Silent)
+	if flags.Silent != true {
+		t.Errorf("Expected Silent to be true, got '%v'", flags.Silent)
 	}
 }
 

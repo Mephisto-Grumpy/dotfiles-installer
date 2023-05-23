@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/manifoldco/promptui v0.9.0
 	github.com/pterm/pterm v0.12.61
+	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.0
 )
 

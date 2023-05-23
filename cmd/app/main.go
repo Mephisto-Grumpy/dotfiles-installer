@@ -10,9 +10,9 @@ import (
 func main() {
 	c := &cli.CLI{}
 
-	c.ParseFlags()
+	c.Flags.ParseFlags()
 
-	if c.Help {
+	if c.Flags.Help {
 		c.ShowHelp()
 		return
 	}
@@ -26,15 +26,15 @@ func main() {
 	e := &utils.CmdExecutor{}
 	fs := &utils.OSFilesystem{}
 
-	if !c.Silent {
-		pterm.Info.Printf("Cloning dotfiles from: %s\n", c.URL)
+	if !c.Flags.Silent {
+		pterm.Info.Printf("Cloning dotfiles from: %s\n", c.Flags.URL)
 	}
 
-	if c.Sudo {
+	if c.Flags.Sudo {
 		pterm.Info.Println("Running as sudo")
 	}
 
-	err = dotfiles.Install(e, fs, c.URL, c.Silent, c.Sudo)
+	err = dotfiles.Install(e, fs, c.Flags.URL, c.Flags.Silent, c.Flags.Sudo)
 	if err != nil {
 		c.ShowError(err)
 		return

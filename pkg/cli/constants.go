@@ -2,5 +2,5 @@ package cli
 
 const (
 	AppName    = "Dotfiles Installer"
-	AppVersion = "1.0.4"
+	AppVersion = "1.0.5"
 )

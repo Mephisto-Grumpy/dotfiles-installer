@@ -28,7 +28,7 @@ Build the project:
 
 ```bash
 cd dotfiles-installer
-make build
+make # or make build
 ```
 
 This will generate a `dotfiles-installer` binary in your current directory.
@@ -45,6 +45,18 @@ go test -race -coverprofile=coverage.out -covermode=atomic -tags test ./...
 docker build -t dotfiles-installer .
 docker run --rm -it -v $(pwd)/bin/*:/home/ubuntu/bin dotfiles-installer
 ```
+
+## 📖 Usage
+
+```bash
+./dotfiles-installer -h # or ./dotfiles-installer --help
+```
+
+## 🛠️ Built With
+
+- [Go](https://golang.org/) - The Go Programming Language
+- [GitHub Actions](https://github.com/features/actions) - CI/CD
+- [CMake](https://cmake.org/) - Build System
 
 ## ✍🏻 Authors
 

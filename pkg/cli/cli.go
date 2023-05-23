@@ -2,28 +2,17 @@ package cli
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"strings"
 	"text/tabwriter"
 
+	"github.com/Mephisto-Grumpy/dotfiles-installer/pkg/flag"
 	"github.com/manifoldco/promptui"
 	"github.com/pterm/pterm"
 )
 
 type CLI struct {
-	URL    string
-	Silent bool
-	Help   bool
-	Sudo   bool
-}
-
-func (c *CLI) ParseFlags() {
-	flag.StringVar(&c.URL, "url", "", "URL of the dotfile repo (optional, will be prompted if not provided)")
-	flag.BoolVar(&c.Silent, "s", false, "Run in silent mode (optional)")
-	flag.BoolVar(&c.Sudo, "force", false, "Run as sudo (optional)")
-	flag.BoolVar(&c.Help, "h", false, "Show help message")
-	flag.Parse()
+	Flags flag.Flags
 }
 
 func (c *CLI) ShowHelp() {
@@ -46,7 +35,7 @@ func (c *CLI) ShowHelp() {
 }
 
 func (c *CLI) PromptURL() error {
-	if c.URL != "" {
+	if c.Flags.URL != "" {
 		return nil
 	}
 
@@ -61,7 +50,7 @@ func (c *CLI) PromptURL() error {
 		return err
 	}
 
-	c.URL = url
+	c.Flags.URL = url
 
 	promptSilent := promptui.Prompt{
 		Label:     "Do you want to run in silent mode? (Y/n)",
@@ -74,7 +63,7 @@ func (c *CLI) PromptURL() error {
 		return err
 	}
 
-	c.Silent = strings.ToLower(silent) == "y"
+	c.Flags.Silent = strings.ToLower(silent) == "y"
 
 	promptSudo := promptui.Prompt{
 		Label:     "Do you want to run with sudo? (Y/n)",
@@ -87,7 +76,7 @@ func (c *CLI) PromptURL() error {
 		return err
 	}
 
-	c.Sudo = strings.ToLower(sudo) == "y"
+	c.Flags.Sudo = strings.ToLower(sudo) == "y"
 
 	return nil
 }
