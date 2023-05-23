@@ -42,7 +42,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build
-          path: ${{ github.workspace }}/bin/*
+          path: |
+            bin/dotfiles-installer-linux-amd64
+            bin/dotfiles-installer-darwin-amd64
 
   publish:
     needs: build
@@ -55,7 +57,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build
-          path: build
+          path: |
+            bin/dotfiles-installer-linux-amd64
+            bin/dotfiles-installer-darwin-amd64
 
       - name: Check File Changes
         uses: dorny/paths-filter@v2
@@ -109,7 +113,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/*
+          file: |
+            bin/dotfiles-installer-linux-amd64
+            bin/dotfiles-installer-darwin-amd64
           tag: ${{ env.VERSION }}
           overwrite: true
 
@@ -120,6 +126,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/*
+          file: |
+            bin/dotfiles-installer-linux-amd64
+            bin/dotfiles-installer-darwin-amd64
           tag: ${{ env.VERSION }}
           overwrite: true
