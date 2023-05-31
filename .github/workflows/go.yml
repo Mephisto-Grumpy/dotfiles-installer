@@ -126,7 +126,7 @@ jobs:
           overwrite: true
 
   homebrew_releaser:
-    needs: build
+    needs: publish
     name: Homebrew Releaser
     runs-on: ubuntu-latest
     steps:
