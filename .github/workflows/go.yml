@@ -43,8 +43,7 @@ jobs:
         with:
           name: build
           path: |
-            bin/dotfiles-installer-linux-amd64
-            bin/dotfiles-installer-darwin-amd64
+            bin/*
 
   publish:
     needs: build
@@ -58,8 +57,7 @@ jobs:
         with:
           name: build
           path: |
-            bin/dotfiles-installer-linux-amd64
-            bin/dotfiles-installer-darwin-amd64
+            bin/
 
       - name: Get SHA256
         id: sha256
@@ -122,11 +120,10 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: |
-            bin/dotfiles-installer-linux-amd64
-            bin/dotfiles-installer-darwin-amd64
+            bin/*
           body: |
             ## SHA256 Checksums
-            - Darwin: ${{ env.SHA256_MAC }} 🍎
-            - Linux: ${{ env.SHA256_LINUX }} 🐧
+            - Darwin: `${{ env.SHA256_MAC }}` 🍎
+            - Linux: `${{ env.SHA256_LINUX }}` 🐧
           tag: ${{ env.VERSION }}
           overwrite: true
