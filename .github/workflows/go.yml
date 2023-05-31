@@ -106,6 +106,14 @@ jobs:
           VER=$(cat $VER_FILE)
           echo "VERSION=$VER" >> $GITHUB_ENV
 
+      - name: Get Sha256
+        id: get_sha256
+        run: |
+          SHA256=$(sha256sum bin/dotfiles-installer-darwin-amd64 | awk '{print $1}')
+          echo "SHA256_DARWIN=$SHA256" >> $GITHUB_ENV
+          SHA256=$(sha256sum bin/dotfiles-installer-linux-amd64 | awk '{print $1}')
+          echo "SHA256_LINUX=$SHA256" >> $GITHUB_ENV
+
       - name: Create Release
         uses: svenstaro/upload-release-action@v2
         if: ${{ env.VERSION }} != ''
@@ -118,9 +126,7 @@ jobs:
             bin/dotfiles-installer-darwin-amd64
           body: |
             ## SHA256 Checksums
-            \`\`\`
-            $(sha256sum bin/dotfiles-installer-linux-amd64)
-            $(sha256sum bin/dotfiles-installer-darwin-amd64)
-            \`\`\`
+            - Linux: ${{ env.SHA256_LINUX }} 🐧
+            - Darwin: ${{ env.SHA256_DARWIN }} 🍎
           tag: ${{ env.VERSION }}
           overwrite: true
