@@ -61,11 +61,11 @@ jobs:
             bin/dotfiles-installer-linux-amd64
             bin/dotfiles-installer-darwin-amd64
 
-      - name: Get Sha256
-        id: get_sha256
+      - name: Get SHA256
+        id: sha256
         run: |
           SHA256=$(shasum -a 256 bin/dotfiles-installer-darwin-amd64 | awk '{print $1}')
-          echo "SHA256_DARWIN=$SHA256" >> $GITHUB_ENV
+          echo "SHA256_MAC=$SHA256" >> $GITHUB_ENV
           SHA256=$(shasum -a 256 bin/dotfiles-installer-linux-amd64 | awk '{print $1}')
           echo "SHA256_LINUX=$SHA256" >> $GITHUB_ENV
 
@@ -126,7 +126,7 @@ jobs:
             bin/dotfiles-installer-darwin-amd64
           body: |
             ## SHA256 Checksums
+            - Darwin: ${{ env.SHA256_MAC }} 🍎
             - Linux: ${{ env.SHA256_LINUX }} 🐧
-            - Darwin: ${{ env.SHA256_DARWIN }} 🍎
           tag: ${{ env.VERSION }}
           overwrite: true
