@@ -166,11 +166,10 @@ jobs:
                   url "${{ env.RELEASE_URL_DARWIN }}"
                   sha256 "${{ env.SHA256_DARWIN }}"
                   bin.install "dotfiles-installer-darwin-amd64" => "dotfiles-installer"
-              else
+                else
                   url "${{ env.RELEASE_URL_LINUX }}"
                   sha256 "${{ env.SHA256_LINUX }}"
                   bin.install "dotfiles-installer-linux-amd64" => "dotfiles-installer"
-              end
           target_darwin_amd64: true
           target_linux_amd64: true
           test: |
