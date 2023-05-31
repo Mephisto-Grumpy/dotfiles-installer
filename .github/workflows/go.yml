@@ -61,6 +61,14 @@ jobs:
             bin/dotfiles-installer-linux-amd64
             bin/dotfiles-installer-darwin-amd64
 
+      - name: Get Sha256
+        id: get_sha256
+        run: |
+          SHA256=$(sha256sum -a 256 bin/dotfiles-installer-darwin-amd64 | awk '{print $1}')
+          echo "SHA256_DARWIN=$SHA256" >> $GITHUB_ENV
+          SHA256=$(sha256sum -a 256 bin/dotfiles-installer-linux-amd64 | awk '{print $1}')
+          echo "SHA256_LINUX=$SHA256" >> $GITHUB_ENV
+
       - name: Check File Changes
         uses: dorny/paths-filter@v2
         id: changes
@@ -105,14 +113,6 @@ jobs:
           VER_FILE=.version
           VER=$(cat $VER_FILE)
           echo "VERSION=$VER" >> $GITHUB_ENV
-
-      - name: Get Sha256
-        id: get_sha256
-        run: |
-          SHA256=$(sha256sum bin/dotfiles-installer-darwin-amd64 | awk '{print $1}')
-          echo "SHA256_DARWIN=$SHA256" >> $GITHUB_ENV
-          SHA256=$(sha256sum bin/dotfiles-installer-linux-amd64 | awk '{print $1}')
-          echo "SHA256_LINUX=$SHA256" >> $GITHUB_ENV
 
       - name: Create Release
         uses: svenstaro/upload-release-action@v2
