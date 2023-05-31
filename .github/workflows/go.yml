@@ -152,8 +152,10 @@ jobs:
       - name: Get Sha256
         id: get_sha256
         run: |
-          echo SHA256_MAC=$(shasum -a 256 bin/dotfiles-installer-darwin-amd64 | awk '{print $1}') >> $GITHUB_ENV
-          echo SHA256_LINUX=$(shasum -a 256 bin/dotfiles-installer-linux-amd64 | awk '{print $1}') >> $GITHUB_ENV
+          SHA256=$(sha256sum bin/dotfiles-installer-darwin-amd64 | awk '{print $1}')
+          echo "SHA256_DARWIN=$SHA256" >> $GITHUB_ENV
+          SHA256=$(sha256sum bin/dotfiles-installer-linux-amd64 | awk '{print $1}')
+          echo "SHA256_LINUX=$SHA256" >> $GITHUB_ENV
 
       - name: Release to Homebrew tap
         uses: Justintime50/homebrew-releaser@v1
