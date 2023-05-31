@@ -138,16 +138,40 @@ jobs:
             bin/dotfiles-installer-linux-amd64
             bin/dotfiles-installer-darwin-amd64
 
+      - name: Get Release URL
+        id: get_release_url
+        run: |
+          VER_FILE=.version
+          VER=$(cat $VER_FILE)
+          echo "RELEASE_URL_DARWIN=$(curl -s https://api.github.com/repos/Mephisto-Grumpy/dotfiles-installer/releases/tags/$VER | jq -r '.assets[] | select(.name | contains("darwin-amd64")) | .browser_download_url')" >> $GITHUB_ENV
+          echo "RELEASE_URL_LINUX=$(curl -s https://api.github.com/repos/Mephisto-Grumpy/dotfiles-installer/releases/tags/$VER | jq -r '.assets[] | select(.name | contains("linux-amd64")) | .browser_download_url')" >> $GITHUB_ENV
+
+      - name: Get Sha256
+        id: get_sha256
+        run: |
+          echo "SHA256_DARWIN=$(curl -s https://api.github.com/repos/Mephisto-Grumpy/dotfiles-installer/releases/tags/$VER | jq -r '.assets[] | select(.name | contains("darwin-amd64")) | .browser_download_url' | xargs curl -sL | sha256sum | awk '{print $1}')" >> $GITHUB_ENV
+          echo "SHA256_LINUX=$(curl -s https://api.github.com/repos/Mephisto-Grumpy/dotfiles-installer/releases/tags/$VER | jq -r '.assets[] | select(.name | contains("linux-amd64")) | .browser_download_url' | xargs curl -sL | sha256sum | awk '{print $1}')" >> $GITHUB_ENV
+
       - name: Release to Homebrew tap
         uses: Justintime50/homebrew-releaser@v1
         with:
           homebrew_owner: Mephisto-Grumpy
           homebrew_tap: homebrew-formulas
           github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          install: true
-          target_darwin_amd64: bin/dotfiles-installer-darwin-amd64
-          target_linux_amd64: bin/dotfiles-installer-linux-amd64
-          test: true
+          install: |
+            if OS.mac?
+              bin.install "dotfiles-installer-darwin-amd64" => "dotfiles-installer"
+            else
+              bin.install "dotfiles-installer-linux-amd64" => "dotfiles-installer"
+            end
+          target_darwin_amd64: |
+            url "${{ env.RELEASE_URL_DARWIN }}"
+            sha256 "${{ env.SHA256_DARWIN }}"
+          target_linux_amd64: |
+            url "${{ env.RELEASE_URL_LINUX }}"
+            sha256 "${{ env.SHA256_LINUX }}"
+          test: |
+            assert_match "Version:", shell_output("#{bin}/dotfiles-installer --version")
           update_readme_table: true
           commit_owner: Mephisto-Grumpy
           commit_email: 99166827+Mephisto-Grumpy@users.noreply.github.com
